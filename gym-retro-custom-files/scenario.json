@@ -1,0 +1,31 @@
+{
+  "done": {
+    "variables": {
+      "lives": {
+        "op": "equal",
+        "reference": -1
+      }
+    }
+  },
+  "reward": {
+    "variables": {
+      "xscrollLo": {
+        "measurement": "delta",
+        "op": "positive",
+        "reward": 1
+      },
+      "score": {
+        "reward": 1
+      },
+      "time": {
+        "penalty": 1
+      },
+      "player_state": {
+        "measurement": "absolute",
+        "op": "equal",
+        "reference": 2,
+        "reward": 100
+      }
+    }
+  }
+}

@@ -1,35 +1,52 @@
 import retro
-import gym
 from RandomAgent import TimeLimitWrapper
-from stable_baselines3 import PPO
+from stable_baselines3 import PPO, DQN, A2C
 from stable_baselines3.common.atari_wrappers import MaxAndSkipEnv
+import time
 
-
-model = PPO.load("tmp/best_model.zip")
+# model = PPO.load("PPO/best_model.zip")
+# model = PPO.load("PPO_4-1_best/best_model.zip")
+model = PPO.load("PPO_4-1_tl=1-1/best_model.zip")
 
 def main():
     steps = 0
     #env = retro.make(game='MegaMan2-Nes')
-    env = retro.make(game='SuperMarioBros-Nes')
+    print("Loading Game...")
+    env = retro.make(game='SuperMarioBros-Nes', state="Level4-1")
+    print("Game Loaded!")
+    print("Setting up environment...")
     env = TimeLimitWrapper(env)
     env = MaxAndSkipEnv(env, 4)
 
     obs = env.reset()
     done = False
 
-    while not done:
-        action, state = model.predict(obs)
-        obs, reward, done, info = env.step(action)
-        env.render()
-        if done:
-            obs = env.reset()
-        steps += 1
-        if steps % 1000 == 0:
-            print(f"Total Steps: {steps}")
-            print(info)
+    for e in range(10):
+        print(f"Episode {e+1} of 10")
+        obs = env.reset()
+        done = False
+        total_reward = 0
 
-    print("Final Info")
-    print(info)
+
+        while not done:
+            action, _ = model.predict(obs)
+            obs, reward, done, info = env.step(action)
+            total_reward += reward
+            env.render()
+            print(total_reward, reward)
+            # print(info)
+            # print(total_reward, reward, info)
+
+            time.sleep(0.01667*2)
+            if done:
+                obs = env.reset()
+            steps += 4
+            if steps % 1000 == 0:
+                print(f"Total Steps: {steps}")
+
+        print("Final Info")
+        print(info)
+
     env.close()
 
 
